@@ -72,3 +72,21 @@ app.post("/verify-payment", async (req, res) => {
 app.listen(PORT, () => {
   console.log(`Backend running on port ${PORT}`);
 });
+const bodyParser = require("body-parser");
+
+app.post(
+  "/api/paystack/webhook",
+  bodyParser.raw({ type: "application/json" }),
+  (req, res) => {
+    const event = JSON.parse(req.body.toString());
+
+    console.log("PAYSTACK EVENT:", event.event);
+
+    if (event.event === "charge.success") {
+      console.log("PAYMENT SUCCESS:", event.data.reference);
+      // Save payment to DB here
+    }
+
+    res.sendStatus(200);
+  }
+);
